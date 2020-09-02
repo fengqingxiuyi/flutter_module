@@ -36,7 +36,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'FlutterModule',
+      title: 'flutter_module',
       builder: FlutterBoost.init(postPush: _onRoutePushed),
       theme: ThemeData(
           scaffoldBackgroundColor: ColorConstant.backColor,
