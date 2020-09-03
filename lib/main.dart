@@ -5,6 +5,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_boost/flutter_boost.dart';
 import 'package:flutter_module/constants/colors.dart';
 import 'package:flutter_module/constants/routes.dart';
+import 'package:flutter_module/page/echarts/echarts.dart';
 import 'package:flutter_module/page/test/test.dart';
 
 void main() => runApp(MyApp());
@@ -28,8 +29,13 @@ class _MyAppState extends State<MyApp> {
     }
     //注册路由页面
     FlutterBoost.singleton.registerPageBuilders({
-      // 测试界面
+      // 测试页面
       RouteConstant.flutterTest: (pageName, params, _) => TestPage(params),
+      //ECharts页面
+      RouteConstant.flutterECharts: (pageName, params, _) => EChartsPage(
+            option: rootBundle.loadString('assets/echarts_stacked_area.json'),
+            height: 300,
+          ),
     });
   }
 
@@ -67,7 +73,14 @@ class MainPageState extends State<MainPage> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
-            _createItemWidget('测试页面', TestPage({'content': 'Content From Flutter MainPage'})),
+            _createItemWidget(
+                '测试页面', TestPage({'content': 'Content From Flutter MainPage'})),
+            _createItemWidget(
+                'ECharts页面',
+                EChartsPage(
+                  option:
+                      rootBundle.loadString('assets/echarts_basic_line.json'),
+                )),
           ],
         ));
   }
@@ -77,9 +90,7 @@ class MainPageState extends State<MainPage> {
       child: GestureDetector(
         child: Text(
           name,
-          style: TextStyle(
-            color: Colors.white
-          ),
+          style: TextStyle(color: Colors.white),
           textAlign: TextAlign.center,
         ),
         onTap: () {

@@ -55,15 +55,15 @@ class _TestPageState extends State<TestPage> {
                   params['content'],
                   style: new TextStyle(
                       color: Colors.red,
-                      fontSize: 30,
+                      fontSize: 25,
                       fontWeight: FontWeight.normal,
                       decoration: TextDecoration.none),
                 ),
               ),
               new Container(
-                width: 100,
                 alignment: Alignment.center,
                 child: new MaterialButton(
+                    minWidth: double.infinity,
                     child: new Text("打开原生的toast"),
                     color: Colors.greenAccent,
                     onPressed: () {
@@ -71,9 +71,9 @@ class _TestPageState extends State<TestPage> {
                     }),
               ),
               new Container(
-                width: 100,
                 alignment: Alignment.center,
                 child: new MaterialButton(
+                    minWidth: double.infinity,
                     child: new Text("打开原生的Test页面"),
                     color: Colors.greenAccent,
                     onPressed: () {
@@ -81,13 +81,23 @@ class _TestPageState extends State<TestPage> {
                     }),
               ),
               new Container(
-                width: 100,
                 alignment: Alignment.center,
                 child: new MaterialButton(
+                    minWidth: double.infinity,
                     child: new Text("发送全局消息"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       sendEvent();
+                    }),
+              ),
+              new Container(
+                alignment: Alignment.center,
+                child: new MaterialButton(
+                    minWidth: double.infinity,
+                    child: new Text("打开ECharts页面"),
+                    color: Colors.greenAccent,
+                    onPressed: () {
+                      FlutterBoost.singleton.open(RouteConstant.flutterECharts);
                     }),
               ),
             ],
