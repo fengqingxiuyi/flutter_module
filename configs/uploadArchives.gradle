@@ -1,0 +1,48 @@
+apply plugin: 'maven'
+
+//由于已经把三方pulgin代码打到了目标aar中，所以除了io.flutter，其他plugin都应该在pom中被过滤
+
+final def localMaven = "1".equals(CLOUND_MAVEN) //true: 发布到本地maven仓库， false： 发布到maven私服
+
+final def artGroupId = GROUP
+final def artVersion = VERSION_NAME
+final def artifactId = ARTIFACT_ID
+
+uploadArchives {
+    repositories {
+        mavenDeployer {
+            println "==maven url: ${artGroupId}:${artifactId}:${artVersion}"
+
+            if(localMaven) {
+                repository(url: uri(project.rootProject.projectDir.absolutePath + '/repo-local'))
+            } else {
+                repository(url: MAVEN_URL) {
+                    authentication(userName: MAVEN_ACCOUNT_NAME, password: MAVEN_ACCOUNT_PWD)
+                }
+                snapshotRepository(url: MAVEN_URL_SNAPSHOT) {
+                    authentication(userName: MAVEN_ACCOUNT_NAME, password: MAVEN_ACCOUNT_PWD)
+                }
+            }
+
+            pom.groupId = artGroupId
+            pom.artifactId = artifactId
+            pom.version = artVersion
+
+            pom.project {
+                licenses {
+                    license {
+                        name 'The Apache Software License, artVersion 2.0'
+                        url 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+            }
+            pom.whenConfigured { pom ->
+                def needDelPom = pom.dependencies.findAll { dep -> dep.groupId != 'io.flutter' }
+                needDelPom.forEach { entity ->
+                    pom.dependencies.remove(entity)
+                }
+            }
+
+        }
+    }
+}
