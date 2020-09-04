@@ -7,26 +7,6 @@ projectDir=`pwd`
 # 假如没有引用三方的flutter Plugin 设置false即可
 isPlugin=true
 
-# 版本号自动 + 1
-cd ${projectDir}
-v=`grep VERSION_NAME configs/gradle.properties|cut -d'=' -f2`
-echo 旧版本号$v
-v1=`echo | awk '{split("'$v'",array,"."); print array[1]}'`
-v2=`echo | awk '{split("'$v'",array,"."); print array[2]}'`
-v3=`echo | awk '{split("'$v'",array,"."); print array[3]}'`
-y=`expr $v3 + 1`
-
-vv=$v1"."$v2"."$y
-echo 新版本号$vv
-# 更新配置文件
-sed -i '' 's/VERSION_NAME='$v'/VERSION_NAME='$vv'/g' configs/gradle.properties
-if [ $? -eq 0 ]; then
-    echo ''
-else
-    echo '更新版本号失败...'
-    exit
-fi
-
 # 删除 fat-aar 引用
 function delFatAarConfig() {
     if [  ${isPlugin} == false  ]; then

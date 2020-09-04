@@ -2,25 +2,41 @@ apply plugin: 'maven'
 
 //由于已经把三方pulgin代码打到了目标aar中，所以除了io.flutter，其他plugin都应该在pom中被过滤
 
-final def localMaven = "1".equals(CLOUND_MAVEN) //true: 发布到本地maven仓库， false： 发布到maven私服
+final def isLocalMaven = "1".equals(CLOUND_MAVEN) //true: 发布到本地maven仓库， false： 发布到maven私服
+
+final def isSnapshot = "1".equals(SNAPSHOT) // true: snapshot , false: release
 
 final def artGroupId = GROUP
-final def artVersion = VERSION_NAME
 final def artifactId = ARTIFACT_ID
+
+def artVersion = ""
+if (isSnapshot) {
+    artVersion = "${VERSION_NAME}-SNAPSHOT" //SNAPSHOT必须大写，否则uploadArchives不会成功
+} else {
+    artVersion = VERSION_NAME
+}
 
 uploadArchives {
     repositories {
         mavenDeployer {
-            println "==maven url: ${artGroupId}:${artifactId}:${artVersion}"
+            println "artGroupId:artifactId:artVersion => ${artGroupId}:${artifactId}:${artVersion}"
 
-            if(localMaven) {
-                repository(url: uri(project.rootProject.projectDir.absolutePath + '/repo-local'))
-            } else {
-                repository(url: MAVEN_URL) {
-                    authentication(userName: MAVEN_ACCOUNT_NAME, password: MAVEN_ACCOUNT_PWD)
+            if(isLocalMaven) {
+                //这边加这个判断是因为，比如本来要打snapshot包，但是出错了，这边不会报错，反而会去打release包
+                if (isSnapshot) {
+                    snapshotRepository(url: uri(project.rootProject.projectDir.absolutePath + "/repo-local-snapshot"))
+                } else {
+                    repository(url: uri(project.rootProject.projectDir.absolutePath + "/repo-local"))
                 }
-                snapshotRepository(url: MAVEN_URL_SNAPSHOT) {
-                    authentication(userName: MAVEN_ACCOUNT_NAME, password: MAVEN_ACCOUNT_PWD)
+            } else {
+                if (isSnapshot) {
+                    snapshotRepository(url: MAVEN_URL_SNAPSHOT) {
+                        authentication(userName: MAVEN_ACCOUNT_NAME, password: MAVEN_ACCOUNT_PWD)
+                    }
+                } else {
+                    repository(url: MAVEN_URL) {
+                        authentication(userName: MAVEN_ACCOUNT_NAME, password: MAVEN_ACCOUNT_PWD)
+                    }
                 }
             }
 
