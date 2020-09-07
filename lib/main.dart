@@ -8,7 +8,8 @@ import 'package:flutter_boost/flutter_boost.dart';
 import 'package:flutter_module/constants/colors.dart';
 import 'package:flutter_module/constants/routes.dart';
 import 'package:flutter_module/page/echarts/echarts.dart';
-import 'package:flutter_module/page/map/show_map_type_page.dart';
+import 'package:flutter_module/page/map/bmf/bmf_map_demo.dart';
+import 'package:flutter_module/page/map/mine/map.dart';
 import 'package:flutter_module/page/test/test.dart';
 
 void main() {
@@ -50,8 +51,11 @@ class _MyAppState extends State<MyApp> {
             option: rootBundle.loadString('assets/echarts_stacked_area.json'),
             height: 300,
           ),
+      // 百度地图Demo页面
+      RouteConstant.flutterBmfMapDemo: (pageName, params, _) =>
+          BMFMapDemoPage(),
       // Map页面
-      RouteConstant.flutterMap: (pageName, params, _) => ShowMapTypePage(),
+      RouteConstant.flutterMap: (pageName, params, _) => MapPage(),
     });
   }
 
@@ -97,7 +101,8 @@ class MainPageState extends State<MainPage> {
                   option:
                       rootBundle.loadString('assets/echarts_basic_line.json'),
                 )),
-            _createItemWidget('Map页面', ShowMapTypePage()),
+            _createItemWidget('百度地图Demo页面', BMFMapDemoPage()),
+            _createItemWidget('Map页面', MapPage()),
           ],
         ));
   }

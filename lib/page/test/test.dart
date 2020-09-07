@@ -64,7 +64,7 @@ class _TestPageState extends State<TestPage> {
                 alignment: Alignment.center,
                 child: new MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("打开原生的toast"),
+                    child: new Text("打开Native的toast"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       openNativeToast();
@@ -74,7 +74,7 @@ class _TestPageState extends State<TestPage> {
                 alignment: Alignment.center,
                 child: new MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("打开原生的Test页面"),
+                    child: new Text("打开Native的Test页面"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       openNativePage();
@@ -84,7 +84,7 @@ class _TestPageState extends State<TestPage> {
                 alignment: Alignment.center,
                 child: new MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("发送全局消息"),
+                    child: new Text("发送消息给Native"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       sendEvent();
@@ -94,7 +94,7 @@ class _TestPageState extends State<TestPage> {
                 alignment: Alignment.center,
                 child: new MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("打开ECharts页面"),
+                    child: new Text("打开Flutter的ECharts页面"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       FlutterBoost.singleton.open(RouteConstant.flutterECharts);
@@ -104,7 +104,17 @@ class _TestPageState extends State<TestPage> {
                 alignment: Alignment.center,
                 child: new MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("打开Map页面"),
+                    child: new Text("打开Flutter的百度地图Demo页面"),
+                    color: Colors.greenAccent,
+                    onPressed: () {
+                      FlutterBoost.singleton.open(RouteConstant.flutterBmfMapDemo);
+                    }),
+              ),
+              new Container(
+                alignment: Alignment.center,
+                child: new MaterialButton(
+                    minWidth: double.infinity,
+                    child: new Text("打开Flutter的Map页面"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       FlutterBoost.singleton.open(RouteConstant.flutterMap);

@@ -3,7 +3,9 @@ import 'dart:io' show Platform;
 import 'package:flutter/material.dart';
 import 'package:flutter_bmfbase/BaiduMap/bmfmap_base.dart';
 import 'package:flutter_bmfmap/BaiduMap/bmfmap_map.dart';
-import 'package:flutter_module/page/map/map_base_page_state.dart';
+import 'package:flutter_module/page/map/bmf/CustomWidgets/map_appbar.dart';
+import 'package:flutter_module/page/map/bmf/CustomWidgets/map_base_page_state.dart';
+import 'package:flutter_module/page/map/bmf/constants.dart';
 
 /// 地图类型示例
 class ShowMapTypePage extends StatefulWidget {
@@ -74,8 +76,11 @@ class _ShowMapTypePageState extends BMFBaseMapState<ShowMapTypePage> {
     super.build(context);
     return MaterialApp(
       home: Scaffold(
-        appBar: AppBar(
-          title: Text('地图类型示例'),
+        appBar: BMFAppBar(
+          title: '地图类型示例',
+          onBack: () {
+            Navigator.pop(context);
+          },
         ),
         body: Stack(children: <Widget>[generateMap(), generateControlBar()]),
       ),
@@ -87,7 +92,7 @@ class _ShowMapTypePageState extends BMFBaseMapState<ShowMapTypePage> {
     return Container(
         width: screenSize.width,
         height: 60,
-        color: Color(int.parse('0xFF1F2131')),
+        color: Color(int.parse(Constants.controlBarColor)),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceAround,
           children: <Widget>[
