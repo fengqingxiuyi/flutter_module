@@ -1,14 +1,24 @@
 import 'dart:io';
 
+import 'package:amap_map_fluttify/amap_map_fluttify.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_boost/flutter_boost.dart';
 import 'package:flutter_module/constants/colors.dart';
 import 'package:flutter_module/constants/routes.dart';
 import 'package:flutter_module/page/echarts/echarts.dart';
+import 'package:flutter_module/page/map/map.dart';
 import 'package:flutter_module/page/test/test.dart';
 
-void main() => runApp(MyApp());
+Future<void> main() async {
+  runApp(MyApp());
+
+  await enableFluttifyLog(false);
+  await AmapService.instance.init(
+    iosKey: '',
+    androidKey: '9c1dc3e092f177988623e9a4966b85ee',
+  );
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -36,6 +46,8 @@ class _MyAppState extends State<MyApp> {
             option: rootBundle.loadString('assets/echarts_stacked_area.json'),
             height: 300,
           ),
+      // Map页面
+      RouteConstant.flutterMap: (pageName, params, _) => MapPage(),
     });
   }
 
@@ -81,6 +93,8 @@ class MainPageState extends State<MainPage> {
                   option:
                       rootBundle.loadString('assets/echarts_basic_line.json'),
                 )),
+            _createItemWidget(
+                'Map页面', MapPage()),
           ],
         ));
   }
