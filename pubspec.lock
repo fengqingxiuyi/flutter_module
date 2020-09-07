@@ -69,6 +69,20 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
+  flutter_bmfbase:
+    dependency: transitive
+    description:
+      name: flutter_bmfbase
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.2"
+  flutter_bmfmap:
+    dependency: "direct main"
+    description:
+      name: flutter_bmfmap
+      url: "https://pub.flutter-io.cn"
+    source: hosted
+    version: "1.0.2"
   flutter_boost:
     dependency: "direct main"
     description:

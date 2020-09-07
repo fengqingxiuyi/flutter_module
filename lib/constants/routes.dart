@@ -8,6 +8,8 @@ class RouteConstant {
   static const String flutterTest = flutterScheme + "test";
   //ECharts页面
   static const String flutterECharts = flutterScheme + "echarts";
+  //Map页面
+  static const String flutterMap = flutterScheme + "map";
 
   /// Native页面
   static const String nativeScheme = "flutterandroid://";

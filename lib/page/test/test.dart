@@ -100,6 +100,16 @@ class _TestPageState extends State<TestPage> {
                       FlutterBoost.singleton.open(RouteConstant.flutterECharts);
                     }),
               ),
+              new Container(
+                alignment: Alignment.center,
+                child: new MaterialButton(
+                    minWidth: double.infinity,
+                    child: new Text("打开Map页面"),
+                    color: Colors.greenAccent,
+                    onPressed: () {
+                      FlutterBoost.singleton.open(RouteConstant.flutterMap);
+                    }),
+              ),
             ],
           ),
         ),

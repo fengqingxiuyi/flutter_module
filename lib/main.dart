@@ -2,13 +2,27 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_bmfbase/BaiduMap/bmfmap_base.dart'
+    show BMFMapSDK, BMF_COORD_TYPE;
 import 'package:flutter_boost/flutter_boost.dart';
 import 'package:flutter_module/constants/colors.dart';
 import 'package:flutter_module/constants/routes.dart';
 import 'package:flutter_module/page/echarts/echarts.dart';
+import 'package:flutter_module/page/map/show_map_type_page.dart';
 import 'package:flutter_module/page/test/test.dart';
 
-void main() => runApp(MyApp());
+void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // 百度地图sdk初始化鉴权
+  if (Platform.isAndroid) {
+    // Android 目前不支持接口设置Apikey,
+    // 请在主工程的Manifest文件里设置，详细配置方法请参考官网(https://lbsyun.baidu.com/)demo
+    BMFMapSDK.setCoordType(BMF_COORD_TYPE.BD09LL);
+  }
+
+  runApp(MyApp());
+}
 
 class MyApp extends StatefulWidget {
   @override
@@ -36,6 +50,8 @@ class _MyAppState extends State<MyApp> {
             option: rootBundle.loadString('assets/echarts_stacked_area.json'),
             height: 300,
           ),
+      // Map页面
+      RouteConstant.flutterMap: (pageName, params, _) => ShowMapTypePage(),
     });
   }
 
@@ -81,6 +97,7 @@ class MainPageState extends State<MainPage> {
                   option:
                       rootBundle.loadString('assets/echarts_basic_line.json'),
                 )),
+            _createItemWidget('Map页面', ShowMapTypePage()),
           ],
         ));
   }
