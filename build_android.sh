@@ -81,6 +81,34 @@ function addFatAArConfig() {
       fi
 }
 
+function fixError() {
+    if [ `grep -c "packagingOptions" .android/app/build.gradle` -eq '1' ]; then
+        echo "app/build.gradle 中 packagingOptions 已存在 ！！！"
+    else
+        echo "app/build.gradle 中 packagingOptions 不存在，去添加"
+        sed -i '' '5 a\
+        packagingOptions {\
+        pickFirst "lib/arm64-v8a/libindoor.so"\
+        pickFirst "lib/arm64-v8a/liblocSDK8a.so"\
+        pickFirst "lib/arm64-v8a/libBaiduMapSDK_map_v6_4_1.so"\
+        pickFirst "lib/arm64-v8a/libBaiduMapSDK_base_v6_4_1.so"\
+        pickFirst "lib/x86/libindoor.so"\
+        pickFirst "lib/x86/liblocSDK8a.so"\
+        pickFirst "lib/x86/libBaiduMapSDK_map_v6_4_1.so"\
+        pickFirst "lib/x86/libBaiduMapSDK_base_v6_4_1.so"\
+        pickFirst "lib/x86_64/libindoor.so"\
+        pickFirst "lib/x86_64/liblocSDK8a.so"\
+        pickFirst "lib/x86_64/libBaiduMapSDK_map_v6_4_1.so"\
+        pickFirst "lib/x86_64/libBaiduMapSDK_base_v6_4_1.so"\
+        pickFirst "lib/armeabi-v7a/libindoor.so"\
+        pickFirst "lib/armeabi-v7a/liblocSDK8a.so"\
+        pickFirst "lib/armeabi-v7a/libBaiduMapSDK_map_v6_4_1.so"\
+        pickFirst "lib/armeabi-v7a/libBaiduMapSDK_base_v6_4_1.so"\
+        }
+        ' .android/app/build.gradle
+    fi
+}
+
 
 # step1 clean
 echo 'clean old build'
@@ -126,6 +154,8 @@ fi
 # 在 settings.gradle 中 插入 ， 注意 sed 命令换行 在mac下 是 \'$'\n
 
 addFatAArConfig
+
+fixError
 
 # step 6 build aar ，生成 aar ， 然后上传到maven
 echo 'build aar'

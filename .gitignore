@@ -42,5 +42,10 @@ build/
 .flutter-plugins-dependencies
 
 # 过滤开发过程中自动生成的文件
-build.gradle
-*.log
+/build.gradle
+/*.log
+/.gradle
+/gradle
+/gradlew
+/gradlew.bat
+/local.properties
