@@ -17,6 +17,10 @@ class MapPage extends StatefulWidget {
 }
 
 class _MapPageState extends State<MapPage> {
+  //默认纬度和经度
+  static const double DEFAULT_LATITUDE = 39.915119;
+  static const double DEFAULT_LONGITUDE = 116.403963;
+
   //地图
   BMFMapController myMapController;
   Size screenSize;
@@ -29,6 +33,9 @@ class _MapPageState extends State<MapPage> {
   //绘制
   BMFMarker marker;
   BMFPolyline colorsPolyline;
+  BMFCircle circle;
+  BMFText text;
+  BMFGround ground;
 
   @override
   void initState() {
@@ -107,6 +114,48 @@ class _MapPageState extends State<MapPage> {
                         removePolyline();
                       },
                     ),
+                    MaterialButton(
+                      child: Text("添加圆形"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        addCircle();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("移除圆形"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        removeCircle();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("添加文字"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        addText();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("移除文字"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        removeText();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("添加图片"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        addGround();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("移除图片"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        removeGround();
+                      },
+                    ),
                   ],
                 ),
               ),
@@ -181,7 +230,8 @@ class _MapPageState extends State<MapPage> {
 
   /// 设置地图参数
   BMFMapOptions initMapOptions() {
-    BMFCoordinate center = new BMFCoordinate(39.915119, 116.403963);
+    BMFCoordinate center =
+        new BMFCoordinate(DEFAULT_LATITUDE, DEFAULT_LONGITUDE);
     BMFMapOptions mapOptions = BMFMapOptions(
         mapType: BMFMapType.Standard,
         zoomLevel: 12,
@@ -234,7 +284,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   /// 设置android端和ios端定位参数
-  void _setLocOption() {
+  setLocOption() {
     /// android 端设置定位参数
     BaiduLocationAndroidOption androidOption = new BaiduLocationAndroidOption();
     androidOption.setCoorType("GCJ02"); // 设置返回的位置坐标系类型
@@ -253,7 +303,7 @@ class _MapPageState extends State<MapPage> {
     BaiduLocationIOSOption iosOption = new BaiduLocationIOSOption();
     iosOption.setIsNeedNewVersionRgc(true); // 设置是否需要返回最新版本rgc信息
     iosOption.setBMKLocationCoordinateType(
-        "BMKLocationCoordinateTypeBMK09LL"); // 设置返回的位置坐标系类型
+        "BMKLocationCoordinateTypeGCJ02"); // 设置返回的位置坐标系类型
     iosOption.setActivityType("CLActivityTypeAutomotiveNavigation"); // 设置应用位置类型
     iosOption.setLocationTimeout(10); // 设置位置获取超时时间
     iosOption.setDesiredAccuracy("kCLLocationAccuracyBest"); // 设置预期精度参数
@@ -268,22 +318,22 @@ class _MapPageState extends State<MapPage> {
   }
 
   /// 启动定位
-  void startLocation() {
+  startLocation() {
     if (null != locationPlugin) {
-      _setLocOption();
+      setLocOption();
       locationPlugin.startLocation();
     }
   }
 
   /// 停止定位
-  void stopLocation() {
+  stopLocation() {
     locationPlugin?.stopLocation();
   }
 
   ///回到初始位置
-  void setDefaultLocation() {
-    myMapController?.updateMapOptions(
-        BMFMapOptions(center: BMFCoordinate(39.915119, 116.403963)));
+  setDefaultLocation() {
+    myMapController?.updateMapOptions(BMFMapOptions(
+        center: BMFCoordinate(DEFAULT_LATITUDE, DEFAULT_LONGITUDE)));
   }
 
   @override
@@ -307,36 +357,38 @@ class _MapPageState extends State<MapPage> {
     /// 添加Marker
     myMapController
         ?.addMarker(marker)
-        ?.then((value) => print('$TAG-添加Marker-$value'));
+        ?.then((value) => print('$TAG-添加标记-$value'));
   }
 
   ///移除标记
   removeMarker() {
-    myMapController?.removeMarker(marker);
+    myMapController
+        ?.removeMarker(marker)
+        ?.then((value) => print('$TAG-移除标记-$value'));
   }
 
   ///添加线
   addPolyline() {
-    /// 坐标点
-    List<BMFCoordinate> coordinates = List(5);
-    coordinates[0] = BMFCoordinate(39.865, 116.304);
-    coordinates[1] = BMFCoordinate(39.825, 116.354);
-    coordinates[2] = BMFCoordinate(39.855, 116.394);
-    coordinates[3] = BMFCoordinate(39.805, 116.454);
-    coordinates[4] = BMFCoordinate(39.865, 116.504);
-
-    /// 颜色索引,索引的值都是0,表示所有线段的颜色都取颜色集colors的第一个值
-    List<int> indexs = [0, 1, 2, 3];
-
-    /// 颜色
-    List<Color> colors = List(4);
-    colors[0] = Colors.blue;
-    colors[1] = Colors.orange;
-    colors[2] = Colors.red;
-    colors[3] = Colors.green;
-
     /// 创建polyline
     if (colorsPolyline == null) {
+      /// 坐标点
+      List<BMFCoordinate> coordinates = List(5);
+      coordinates[0] = BMFCoordinate(39.865, 116.304);
+      coordinates[1] = BMFCoordinate(39.825, 116.354);
+      coordinates[2] = BMFCoordinate(39.855, 116.394);
+      coordinates[3] = BMFCoordinate(39.805, 116.454);
+      coordinates[4] = BMFCoordinate(39.865, 116.504);
+
+      /// 颜色索引,索引的值都是0,表示所有线段的颜色都取颜色集colors的第一个值
+      List<int> indexs = [0, 1, 2, 3];
+
+      /// 颜色
+      List<Color> colors = List(4);
+      colors[0] = Colors.blue;
+      colors[1] = Colors.orange;
+      colors[2] = Colors.red;
+      colors[3] = Colors.green;
+
       colorsPolyline = BMFPolyline(
           coordinates: coordinates,
           indexs: indexs,
@@ -349,6 +401,7 @@ class _MapPageState extends State<MapPage> {
 
     ///在添加polyline之前需要先移除，polyline不能像Marker一样添加多次后移除
     removePolyline();
+
     /// 添加polyline
     myMapController
         ?.addPolyline(colorsPolyline)
@@ -357,6 +410,97 @@ class _MapPageState extends State<MapPage> {
 
   ///移除线
   removePolyline() {
-    myMapController?.removeOverlay(colorsPolyline?.getId());
+    myMapController
+        ?.removeOverlay(colorsPolyline?.getId())
+        ?.then((value) => print('$TAG-移除线-$value'));
+  }
+
+  ///添加圆形
+  addCircle() {
+    /// 创建circle
+    if (circle == null) {
+      circle = BMFCircle(
+          center: BMFCoordinate(40.048, 116.404),
+          radius: 5000,
+          width: 6,
+          strokeColor: Colors.green[400],
+          fillColor: Color(0x88FFC107),
+          lineDashType: BMFLineDashType.LineDashTypeDot);
+    }
+
+    ///在添加circle之前需要先移除，circle不能像Marker一样添加多次后移除
+    removeCircle();
+
+    ///添加circle
+    myMapController
+        ?.addCircle(circle)
+        ?.then((value) => print('$TAG-添加圆形-$value'));
+  }
+
+  ///移除圆形
+  removeCircle() {
+    myMapController
+        ?.removeOverlay(circle?.getId())
+        ?.then((value) => print('$TAG-移除圆形-$value'));
+  }
+
+  ///添加文字
+  addText() {
+    ///创建text
+    if (text == null) {
+      BMFCoordinate position = new BMFCoordinate(39.77235, 116.350338);
+      text = BMFText(
+          text: 'hello world',
+          position: position,
+          bgColor: Colors.red,
+          fontColor: Colors.white,
+          fontSize: 50,
+          typeFace: BMFTypeFace(
+              familyName: BMFFamilyName.sSansSerif,
+              textStype: BMFTextStyle.NORMAL),
+          alignY: BMFVerticalAlign.ALIGN_CENTER_VERTICAL,
+          alignX: BMFHorizontalAlign.ALIGN_CENTER_HORIZONTAL,
+          rotate: 0.0);
+    }
+
+    ///在添加text之前需要先移除，text不能像Marker一样添加多次后移除
+    removeText();
+
+    ///添加text
+    myMapController?.addText(text)?.then((value) => print('$TAG-添加文字-$value'));
+  }
+
+  ///移除文字
+  removeText() {
+    myMapController
+        ?.removeOverlay(text?.getId())
+        ?.then((value) => print('$TAG-移除文字-$value'));
+  }
+
+  ///添加图片
+  addGround() {
+    ///创建ground
+    if (ground == null) {
+      BMFCoordinate southwest = BMFCoordinate(39.89235, 116.330338);
+      BMFCoordinate northeast = BMFCoordinate(39.927246, 116.464977);
+      BMFCoordinateBounds bounds =
+      BMFCoordinateBounds(southwest: southwest, northeast: northeast);
+
+      ground = BMFGround(
+          image: 'resoures/groundIcon.png', bounds: bounds, transparency: 0.8);
+    }
+
+    ///在添加ground之前需要先移除，ground不能像Marker一样添加多次后移除
+    removeGround();
+
+    ///添加ground
+    myMapController?.addGround(ground)?.then((value) => print('$TAG-添加图片-$value'));
+  }
+
+  ///移除图片
+  removeGround() {
+    myMapController
+        ?.removeOverlay(ground?.getId())
+        ?.then((value) => print('$TAG-移除图片-$value'));
   }
 }
