@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bmfbase/BaiduMap/bmfmap_base.dart'
     show BMFMapSDK, BMF_COORD_TYPE;
+import 'package:flutter_bmflocation/bdmap_location_flutter_plugin.dart';
 import 'package:flutter_boost/flutter_boost.dart';
 import 'package:flutter_module/constants/colors.dart';
 import 'package:flutter_module/constants/routes.dart';
@@ -16,10 +17,13 @@ void main() {
   WidgetsFlutterBinding.ensureInitialized();
 
   // 百度地图sdk初始化鉴权
-  if (Platform.isAndroid) {
+  if (Platform.isIOS) {
+    LocationFlutterPlugin.setApiKey("百度地图开放平台申请的ios端ak");
+    BMFMapSDK.setApiKeyAndCoordType('百度地图开放平台申请的ios端ak', BMF_COORD_TYPE.COMMON);
+  } else if (Platform.isAndroid) {
     // Android 目前不支持接口设置Apikey,
     // 请在主工程的Manifest文件里设置，详细配置方法请参考官网(https://lbsyun.baidu.com/)demo
-    BMFMapSDK.setCoordType(BMF_COORD_TYPE.BD09LL);
+    BMFMapSDK.setCoordType(BMF_COORD_TYPE.COMMON);
   }
 
   runApp(MyApp());
