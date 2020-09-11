@@ -22,18 +22,22 @@ class _MapPageState extends State<MapPage> {
   Size screenSize;
 
   //定位
-  LocationFlutterPlugin _locationPlugin = new LocationFlutterPlugin();
-  StreamSubscription<Map<String, Object>> _locationListener;
+  LocationFlutterPlugin locationPlugin = new LocationFlutterPlugin();
+  StreamSubscription<Map<String, Object>> locationListener;
   BaiduLocation _baiduLocation; // 定位结果
+
+  //绘制
+  BMFMarker marker;
+  BMFPolyline colorsPolyline;
 
   @override
   void initState() {
     super.initState();
 
     /// 动态申请定位权限
-    _locationPlugin.requestPermission();
-    _locationListener =
-        _locationPlugin.onResultCallback().listen((Map<String, Object> result) {
+    locationPlugin.requestPermission();
+    locationListener =
+        locationPlugin.onResultCallback().listen((Map<String, Object> result) {
       setState(() {
         try {
           // 将原生端返回的定位结果信息存储在定位结果类中
@@ -54,78 +58,130 @@ class _MapPageState extends State<MapPage> {
     return MaterialApp(
       home: Scaffold(
           appBar: AppBar(title: Text('Map页面')),
-          body: Container(
-            height: screenSize.height,
-            width: screenSize.width,
-            child: BMFMapWidget(
-              onBMFMapCreated: (controller) {
-                myMapController = controller;
+          body: Flex(
+            direction: Axis.horizontal,
+            children: <Widget>[
+              Expanded(
+                flex: 1,
+                child: ListView(
+                  children: <Widget>[
+                    MaterialButton(
+                      child: Text("开始定位"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        startLocation();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("初始位置"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        setDefaultLocation();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("添加标记"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        addMarker();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("移除标记"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        removeMarker();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("添加线"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        addPolyline();
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("移除线"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        removePolyline();
+                      },
+                    ),
+                  ],
+                ),
+              ),
+              Expanded(
+                flex: 3,
+                child: Container(
+                  height: screenSize.height,
+                  width: screenSize.width / 8,
+                  child: BMFMapWidget(
+                    onBMFMapCreated: (controller) {
+                      myMapController = controller;
 
-                /// 地图加载回调
-                myMapController?.setMapDidLoadCallback(callback: () {
-                  print('$TAG-地图加载完成');
-                  //显示定位图层
-                  myMapController.showUserLocation(true);
-                  //更新定位图层样式
-                  updateLocationView();
-                  //开始定位
-                  _startLocation();
-                  //添加标记
-                  addMarker();
-                  //添加线
-                  addPolyline();
-                });
+                      /// 地图加载回调
+                      myMapController?.setMapDidLoadCallback(callback: () {
+                        print('$TAG-地图加载完成');
+                        //显示定位图层
+                        myMapController.showUserLocation(true);
+                        //更新定位图层样式
+                        updateLocationView();
+                      });
 
-                /// 地图渲染每一帧画面过程中，以及每次需要重绘地图时（例如添加覆盖物）都会调用此接口
-                myMapController?.setMapOnDrawMapFrameCallback(
-                    callback: (BMFMapStatus mapStatus) {
-                  //print('$TAG-地图渲染每一帧\n mapStatus = ${mapStatus.toMap()}');
-                });
+                      /// 地图渲染每一帧画面过程中，以及每次需要重绘地图时（例如添加覆盖物）都会调用此接口
+                      myMapController?.setMapOnDrawMapFrameCallback(
+                          callback: (BMFMapStatus mapStatus) {
+                        //print('$TAG-地图渲染每一帧\n mapStatus = ${mapStatus.toMap()}');
+                      });
 
-                /// 地图区域即将改变时会调用此接口
-                /// mapStatus 地图状态信息
-                myMapController?.setMapRegionWillChangeCallback(
-                    callback: (BMFMapStatus mapStatus) {
-                  print('$TAG-地图区域即将改变时会调用此接口1\n'
-                      'mapStatus = ${mapStatus.toMap()}');
-                });
+                      /// 地图区域即将改变时会调用此接口
+                      /// mapStatus 地图状态信息
+                      myMapController?.setMapRegionWillChangeCallback(
+                          callback: (BMFMapStatus mapStatus) {
+                        print('$TAG-地图区域即将改变时会调用此接口1\n'
+                            'mapStatus = ${mapStatus.toMap()}');
+                      });
 
-                /// 地图区域改变完成后会调用此接口
-                /// mapStatus 地图状态信息
-                myMapController?.setMapRegionDidChangeCallback(
-                    callback: (BMFMapStatus mapStatus) {
-                  print('$TAG-地图区域改变完成后会调用此接口2\n'
-                      'mapStatus = ${mapStatus.toMap()}');
-                });
+                      /// 地图区域改变完成后会调用此接口
+                      /// mapStatus 地图状态信息
+                      myMapController?.setMapRegionDidChangeCallback(
+                          callback: (BMFMapStatus mapStatus) {
+                        print('$TAG-地图区域改变完成后会调用此接口2\n'
+                            'mapStatus = ${mapStatus.toMap()}');
+                      });
 
-                /// 地图区域即将改变时会调用此接口
-                /// mapStatus 地图状态信息
-                /// reason 地图改变原因
-                myMapController?.setMapRegionWillChangeWithReasonCallback(
-                    callback: (BMFMapStatus mapStatus,
-                        BMFRegionChangeReason regionChangeReason) {
-                  print('$TAG-地图区域即将改变时会调用此接口3\n'
-                      'mapStatus = ${mapStatus.toMap()}\nreason = ${regionChangeReason.index}');
-                });
+                      /// 地图区域即将改变时会调用此接口
+                      /// mapStatus 地图状态信息
+                      /// reason 地图改变原因
+                      myMapController?.setMapRegionWillChangeWithReasonCallback(
+                          callback: (BMFMapStatus mapStatus,
+                              BMFRegionChangeReason regionChangeReason) {
+                        print('$TAG-地图区域即将改变时会调用此接口3\n'
+                            'mapStatus = ${mapStatus.toMap()}\nreason = ${regionChangeReason.index}');
+                      });
 
-                /// 地图区域改变完成后会调用此接口
-                /// mapStatus 地图状态信息
-                /// reason 地图改变原因
-                myMapController?.setMapRegionDidChangeWithReasonCallback(
-                    callback: (BMFMapStatus mapStatus,
-                        BMFRegionChangeReason regionChangeReason) {
-                  print('$TAG-地图区域改变完成后会调用此接口4\n'
-                      'mapStatus = ${mapStatus.toMap()}\nreason = ${regionChangeReason.index}');
-                });
-              },
-              mapOptions: initMapOptions(),
-            ),
+                      /// 地图区域改变完成后会调用此接口
+                      /// mapStatus 地图状态信息
+                      /// reason 地图改变原因
+                      myMapController?.setMapRegionDidChangeWithReasonCallback(
+                          callback: (BMFMapStatus mapStatus,
+                              BMFRegionChangeReason regionChangeReason) {
+                        print('$TAG-地图区域改变完成后会调用此接口4\n'
+                            'mapStatus = ${mapStatus.toMap()}\nreason = ${regionChangeReason.index}');
+                      });
+                    },
+                    mapOptions: initMapOptions(),
+                  ),
+                ),
+              ),
+            ],
           )),
     );
   }
 
   /// 设置地图参数
   BMFMapOptions initMapOptions() {
+    BMFCoordinate center = new BMFCoordinate(39.915119, 116.403963);
     BMFMapOptions mapOptions = BMFMapOptions(
         mapType: BMFMapType.Standard,
         zoomLevel: 12,
@@ -134,14 +190,13 @@ class _MapPageState extends State<MapPage> {
         logoPosition: BMFLogoPosition.LeftBottom,
         mapPadding: BMFEdgeInsets(top: 0, left: 50, right: 50, bottom: 0),
         overlookEnabled: true,
-        overlooking: -15);
+        overlooking: -15,
+        center: center);
     return mapOptions;
   }
 
   ///更新位置
   updateLocationData(double latitude, double longitude) {
-    latitude = 39.965;
-    longitude = 116.404;
     print('latitude = $latitude, longitude = $longitude');
     BMFCoordinate coordinate = BMFCoordinate(latitude, longitude);
 
@@ -209,46 +264,55 @@ class _MapPageState extends State<MapPage> {
 
     Map iosMap = iosOption.getMap();
 
-    _locationPlugin.prepareLoc(androidMap, iosMap);
+    locationPlugin.prepareLoc(androidMap, iosMap);
   }
 
   /// 启动定位
-  void _startLocation() {
-    if (null != _locationPlugin) {
+  void startLocation() {
+    if (null != locationPlugin) {
       _setLocOption();
-      _locationPlugin.startLocation();
+      locationPlugin.startLocation();
     }
   }
 
   /// 停止定位
-  void _stopLocation() {
-    if (null != _locationPlugin) {
-      _locationPlugin.stopLocation();
-    }
+  void stopLocation() {
+    locationPlugin?.stopLocation();
+  }
+
+  ///回到初始位置
+  void setDefaultLocation() {
+    myMapController?.updateMapOptions(
+        BMFMapOptions(center: BMFCoordinate(39.915119, 116.403963)));
   }
 
   @override
   void dispose() {
     super.dispose();
     // 停止定位
-    if (null != _locationListener) {
-      _locationListener.cancel();
-    }
+    locationListener?.cancel();
   }
 
   ///添加标记
   addMarker() {
     /// 创建BMFMarker
-    BMFMarker marker = BMFMarker(
-        position: BMFCoordinate(39.928617, 116.40329),
-        title: 'flutterMaker',
-        identifier: 'flutter_marker',
-        icon: 'resoures/icon_end.png');
+    if (marker == null) {
+      marker = BMFMarker(
+          position: BMFCoordinate(39.928617, 116.40329),
+          title: 'flutterMaker',
+          identifier: 'flutter_marker',
+          icon: 'resoures/icon_end.png');
+    }
 
     /// 添加Marker
     myMapController
         ?.addMarker(marker)
         ?.then((value) => print('$TAG-添加Marker-$value'));
+  }
+
+  ///移除标记
+  removeMarker() {
+    myMapController?.removeMarker(marker);
   }
 
   ///添加线
@@ -272,18 +336,27 @@ class _MapPageState extends State<MapPage> {
     colors[3] = Colors.green;
 
     /// 创建polyline
-    BMFPolyline colorsPolyline = BMFPolyline(
-        coordinates: coordinates,
-        indexs: indexs,
-        colors: colors,
-        width: 16,
-        lineDashType: BMFLineDashType.LineDashTypeNone,
-        lineCapType: BMFLineCapType.LineCapButt,
-        lineJoinType: BMFLineJoinType.LineJoinRound);
+    if (colorsPolyline == null) {
+      colorsPolyline = BMFPolyline(
+          coordinates: coordinates,
+          indexs: indexs,
+          colors: colors,
+          width: 16,
+          lineDashType: BMFLineDashType.LineDashTypeNone,
+          lineCapType: BMFLineCapType.LineCapButt,
+          lineJoinType: BMFLineJoinType.LineJoinRound);
+    }
 
+    ///在添加polyline之前需要先移除，polyline不能像Marker一样添加多次后移除
+    removePolyline();
     /// 添加polyline
     myMapController
         ?.addPolyline(colorsPolyline)
         ?.then((value) => print('$TAG-添加线-$value'));
+  }
+
+  ///移除线
+  removePolyline() {
+    myMapController?.removeOverlay(colorsPolyline?.getId());
   }
 }

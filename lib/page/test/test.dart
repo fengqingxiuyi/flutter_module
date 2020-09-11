@@ -29,92 +29,92 @@ class _TestPageState extends State<TestPage> {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-      child: new Scaffold(
-        appBar: new AppBar(
-          title: new Text(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(
             '测试页面',
-            style: new TextStyle(fontSize: 20, color: Colors.white),
+            style: TextStyle(fontSize: 20, color: Colors.white),
           ),
           centerTitle: true,
           backgroundColor: Colors.blue,
-          leading: new IconButton(
-            icon: new Icon(Icons.arrow_back),
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
             color: Colors.white,
             onPressed: () {
               closeFlutter(context);
             },
           ),
         ),
-        body: new Container(
+        body: Container(
           color: Colors.white,
-          child: new ListView(
+          child: ListView(
             children: <Widget>[
-              new Container(
+              Container(
                 alignment: Alignment.center,
-                child: new Text(
+                child: Text(
                   params['content'],
-                  style: new TextStyle(
+                  style: TextStyle(
                       color: Colors.red,
                       fontSize: 25,
                       fontWeight: FontWeight.normal,
                       decoration: TextDecoration.none),
                 ),
               ),
-              new Container(
+              Container(
                 alignment: Alignment.center,
-                child: new MaterialButton(
+                child: MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("打开Native的toast"),
+                    child: Text("打开Native的toast"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       openNativeToast();
                     }),
               ),
-              new Container(
+              Container(
                 alignment: Alignment.center,
-                child: new MaterialButton(
+                child: MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("打开Native的Test页面"),
+                    child: Text("打开Native的Test页面"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       openNativePage();
                     }),
               ),
-              new Container(
+              Container(
                 alignment: Alignment.center,
-                child: new MaterialButton(
+                child: MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("发送消息给Native"),
+                    child: Text("发送消息给Native"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       sendEvent();
                     }),
               ),
-              new Container(
+              Container(
                 alignment: Alignment.center,
-                child: new MaterialButton(
+                child: MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("打开Flutter的ECharts页面"),
+                    child: Text("打开Flutter的ECharts页面"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       FlutterBoost.singleton.open(RouteConstant.flutterECharts);
                     }),
               ),
-              new Container(
+              Container(
                 alignment: Alignment.center,
-                child: new MaterialButton(
+                child: MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("打开Flutter的百度地图Demo页面"),
+                    child: Text("打开Flutter的百度地图Demo页面"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       FlutterBoost.singleton.open(RouteConstant.flutterBmfMapDemo);
                     }),
               ),
-              new Container(
+              Container(
                 alignment: Alignment.center,
-                child: new MaterialButton(
+                child: MaterialButton(
                     minWidth: double.infinity,
-                    child: new Text("打开Flutter的Map页面"),
+                    child: Text("打开Flutter的Map页面"),
                     color: Colors.greenAccent,
                     onPressed: () {
                       FlutterBoost.singleton.open(RouteConstant.flutterMap);
