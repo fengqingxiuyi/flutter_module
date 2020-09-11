@@ -6,6 +6,35 @@ A new Flutter module.
 
 For help getting started with Flutter, view our online
 [documentation](https://flutter.dev/).
+# 目录结构
+
+```
+flutter //本机创建的文件夹
+   |--flutter_module //Flutter模块
+        |--assets //其他资源文件目录
+        |--configs //产物构建配置目录
+        |--files //Copy From 百度地图Flutter插件Demo
+        |--images //图片资源文件目录
+        |--lib
+             |--component //通用组件
+                  |--appbar.dart //标题栏组件
+             |--constants //全局常量
+                  |--colors.dart //颜色常量
+                  |--routes.dart //路由常量
+             |--page //页面
+                  |--echarts //ECharts示例页面
+                  |--map //ECharts示例页面
+                      |--bmf //百度地图Flutter插件Demo
+                      |--mine //百度地图Flutter插件使用实战
+                  |--test //测试页面
+             |--utils //工具模块
+             |--main.dart //flutter_module入口文件
+        |--resoures //Copy From 百度地图Flutter插件Demo
+        |--test //测试模块
+        |--build_android.sh //android产物构建脚本
+        |--pubspec.yaml //flutter_module的配置文件
+        |--README.md //文档总结
+```
 
 ## Maven
 

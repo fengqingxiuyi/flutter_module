@@ -70,6 +70,10 @@ class _MapPageState extends State<MapPage> {
                   updateLocationView();
                   //开始定位
                   _startLocation();
+                  //添加标记
+                  addMarker();
+                  //添加线
+                  addPolyline();
                 });
 
                 /// 地图渲染每一帧画面过程中，以及每次需要重绘地图时（例如添加覆盖物）都会调用此接口
@@ -136,6 +140,8 @@ class _MapPageState extends State<MapPage> {
 
   ///更新位置
   updateLocationData(double latitude, double longitude) {
+    latitude = 39.965;
+    longitude = 116.404;
     print('latitude = $latitude, longitude = $longitude');
     BMFCoordinate coordinate = BMFCoordinate(latitude, longitude);
 
@@ -153,7 +159,8 @@ class _MapPageState extends State<MapPage> {
 
     myMapController?.updateLocationData(userLocation);
     //设定地图中心点坐标
-    myMapController?.setCenterCoordinate(BMFCoordinate(latitude, longitude), true);
+    myMapController?.setCenterCoordinate(
+        BMFCoordinate(latitude, longitude), true);
   }
 
   ///更新定位图层样式
@@ -227,5 +234,56 @@ class _MapPageState extends State<MapPage> {
     if (null != _locationListener) {
       _locationListener.cancel();
     }
+  }
+
+  ///添加标记
+  addMarker() {
+    /// 创建BMFMarker
+    BMFMarker marker = BMFMarker(
+        position: BMFCoordinate(39.928617, 116.40329),
+        title: 'flutterMaker',
+        identifier: 'flutter_marker',
+        icon: 'resoures/icon_end.png');
+
+    /// 添加Marker
+    myMapController
+        ?.addMarker(marker)
+        ?.then((value) => print('$TAG-添加Marker-$value'));
+  }
+
+  ///添加线
+  addPolyline() {
+    /// 坐标点
+    List<BMFCoordinate> coordinates = List(5);
+    coordinates[0] = BMFCoordinate(39.865, 116.304);
+    coordinates[1] = BMFCoordinate(39.825, 116.354);
+    coordinates[2] = BMFCoordinate(39.855, 116.394);
+    coordinates[3] = BMFCoordinate(39.805, 116.454);
+    coordinates[4] = BMFCoordinate(39.865, 116.504);
+
+    /// 颜色索引,索引的值都是0,表示所有线段的颜色都取颜色集colors的第一个值
+    List<int> indexs = [0, 1, 2, 3];
+
+    /// 颜色
+    List<Color> colors = List(4);
+    colors[0] = Colors.blue;
+    colors[1] = Colors.orange;
+    colors[2] = Colors.red;
+    colors[3] = Colors.green;
+
+    /// 创建polyline
+    BMFPolyline colorsPolyline = BMFPolyline(
+        coordinates: coordinates,
+        indexs: indexs,
+        colors: colors,
+        width: 16,
+        lineDashType: BMFLineDashType.LineDashTypeNone,
+        lineCapType: BMFLineCapType.LineCapButt,
+        lineJoinType: BMFLineJoinType.LineJoinRound);
+
+    /// 添加polyline
+    myMapController
+        ?.addPolyline(colorsPolyline)
+        ?.then((value) => print('$TAG-添加线-$value'));
   }
 }
