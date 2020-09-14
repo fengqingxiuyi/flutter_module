@@ -29,6 +29,7 @@ class _MapPageState extends State<MapPage> {
   LocationFlutterPlugin locationPlugin = new LocationFlutterPlugin();
   StreamSubscription<Map<String, Object>> locationListener;
   BaiduLocation _baiduLocation; // 定位结果
+  int scanspan; // 0表示单次定位，非0表示循环定位
 
   //绘制
   BMFMarker marker;
@@ -47,6 +48,10 @@ class _MapPageState extends State<MapPage> {
         locationPlugin.onResultCallback().listen((Map<String, Object> result) {
       setState(() {
         try {
+          //只有单次定位才需要在接收到数据后stopLocation，否则第二次定位将收不到结果
+          if (scanspan == 0) {
+            stopLocation();
+          }
           // 将原生端返回的定位结果信息存储在定位结果类中
           _baiduLocation = BaiduLocation.fromMap(result);
           //print('_baiduLocation => ' + json.encode(result));
@@ -73,10 +78,17 @@ class _MapPageState extends State<MapPage> {
                 child: ListView(
                   children: <Widget>[
                     MaterialButton(
-                      child: Text("开始定位"),
+                      child: Text("一次定位"),
                       color: Colors.greenAccent,
                       onPressed: () {
-                        startLocation();
+                        startLocation(0);
+                      },
+                    ),
+                    MaterialButton(
+                      child: Text("循环定位"),
+                      color: Colors.greenAccent,
+                      onPressed: () {
+                        startLocation(1000);
                       },
                     ),
                     MaterialButton(
@@ -284,7 +296,7 @@ class _MapPageState extends State<MapPage> {
   }
 
   /// 设置android端和ios端定位参数
-  setLocOption() {
+  setLocOption(int scanspan) {
     /// android 端设置定位参数
     BaiduLocationAndroidOption androidOption = new BaiduLocationAndroidOption();
     androidOption.setCoorType("GCJ02"); // 设置返回的位置坐标系类型
@@ -295,7 +307,7 @@ class _MapPageState extends State<MapPage> {
     androidOption.setIsNeedLocationDescribe(true); // 设置是否需要返回位置描述
     androidOption.setOpenGps(true); // 设置是否需要使用gps
     androidOption.setLocationMode(LocationMode.Hight_Accuracy); // 设置定位模式
-    androidOption.setScanspan(0); // 设置发起定位请求时间间隔，0表示仅定位一次
+    androidOption.setScanspan(scanspan); // 设置发起定位请求时间间隔，0表示仅定位一次
 
     Map androidMap = androidOption.getMap();
 
@@ -318,9 +330,10 @@ class _MapPageState extends State<MapPage> {
   }
 
   /// 启动定位
-  startLocation() {
+  startLocation(int scanspan) {
+    this.scanspan = scanspan;
     if (null != locationPlugin) {
-      setLocOption();
+      setLocOption(scanspan);
       locationPlugin.startLocation();
     }
   }
